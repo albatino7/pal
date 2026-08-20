@@ -10,10 +10,11 @@ app.get("/notes", (req, res) => {
 });
 
 app.post("/notes", async (req, res) => {
-  const { title, discrption } = req.body;
+  const { title, discrption, age } = req.body;
   const note = await noteModel.create({
     title: title,
     discrption: discrption,
+    age: age,
   });
 
   res.status(200).json({
