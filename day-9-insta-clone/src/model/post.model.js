@@ -11,8 +11,8 @@ const postSchema = new mongoose.Schema({
     required: [true, "please Povide use Image Url "],
   },
   user: {
-    ref: mongoose.Schema.Types.ObjectId,
-    type: "users",
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "users",
     required: [true, "Object is MUST fOR pOST "],
   },
 });
