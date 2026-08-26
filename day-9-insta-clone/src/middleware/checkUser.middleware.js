@@ -1,5 +1,3 @@
-const userModel = require("../model/user.model");
-const postModel = require("../model/post.model");
 const jwt = require("jsonwebtoken");
 
 const checkUserMiddleware = async (req, res, next) => {
