@@ -71,6 +71,39 @@ const CreatePostController = async (req, res) => {
   }
 };
 
+const getAllPostController = async (req, res) => {
+  const token = req.cookies.jwt_token;
+
+  let decoded;
+
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (error) {
+    return res.status(404).json({
+      message: "token in invalid Man",
+    });
+  }
+  const userId = decoded.userid;
+  console.log(userId);
+  const isUserExist = await userModel.find({ userId });
+
+  if (!isUserExist) {
+    return res.status(404).json({
+      message: "user is NOT EXISTED ",
+    });
+  }
+
+  const posts = await postModel.find({
+    user: userId,
+  });
+
+  res.status(200).json({
+    message: "post Fetched Succesfully",
+    posts,
+  });
+};
+
 module.exports = {
   CreatePostController,
+  getAllPostController,
 };
