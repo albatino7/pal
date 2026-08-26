@@ -13,7 +13,7 @@ const followSchema = new mongoose.Schema(
       required: [true, "Followe user id IS ReQuired"],
     },
   },
-  { timestamp: true },
+  { timestamps: true },
 );
 
 followSchema.index({ follower: 1, followe: 1 }, { unique: true });
