@@ -13,22 +13,11 @@ const imageKitIo = new ImagekitIo({
 
 const CreatePostController = async (req, res) => {
   try {
-    // 1. Get token from cookie
-    const token = req.cookies.jwt_token;
-
-    if (!token) {
-      return res.status(401).json({
-        message: "Token is required",
-      });
-    }
-
-    // 2. Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    console.log("Decoded token:", decoded);
+    //getting req.user = decodec from middleware
+    const userID = req.user.userid;
 
     // 3. Check user
-    const user = await userModel.findById(decoded.userid);
+    const user = await userModel.findById(userID);
 
     if (!user) {
       return res.status(401).json({
@@ -53,7 +42,7 @@ const CreatePostController = async (req, res) => {
     const post = await postModel.create({
       caption: req.body.caption,
       imageUrl: file.url,
-      user: decoded.userid,
+      user: userID,
     });
 
     // 7. Send response
@@ -72,20 +61,9 @@ const CreatePostController = async (req, res) => {
 };
 
 const getAllPostController = async (req, res) => {
-  const token = req.cookies.jwt_token;
+  const userID = req.user.userid;
 
-  let decoded;
-
-  try {
-    decoded = jwt.verify(token, process.env.JWT_SECRET);
-  } catch (error) {
-    return res.status(404).json({
-      message: "token in invalid Man",
-    });
-  }
-  const userId = decoded.userid;
-  console.log(userId);
-  const isUserExist = await userModel.find({ userId });
+  const isUserExist = await userModel.find({ userID });
 
   if (!isUserExist) {
     return res.status(404).json({
@@ -94,7 +72,7 @@ const getAllPostController = async (req, res) => {
   }
 
   const posts = await postModel.find({
-    user: userId,
+    user: userID,
   });
 
   res.status(200).json({
