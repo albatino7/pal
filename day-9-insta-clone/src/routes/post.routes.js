@@ -6,14 +6,14 @@ const {
   unlikePostController,
 } = require("../controller/post.controller");
 const { checkUserMiddleware } = require("../middleware/checkUser.middleware");
-const multer = require("multer");
-const uplaod = multer({ storage: multer.memoryStorage() });
+
+const upload = require("../config/multer");
 
 const postRouter = express.Router();
 
 postRouter.post(
   "/create",
-  uplaod.single("image"),
+  upload.single("image"),
   checkUserMiddleware,
   CreatePostController,
 );
