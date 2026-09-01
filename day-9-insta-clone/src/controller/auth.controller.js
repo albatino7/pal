@@ -1,6 +1,7 @@
 const userModel = require("../model/user.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { redis } = require("../config/redis");
 
 /*
 Resgister controller
@@ -13,7 +14,7 @@ const registerController = async (req, res) => {
   });
 
   if (userExist) {
-    return res.status(400).josn({
+    return res.status(400).json({
       message: "User Already EXISTED ",
     });
   }
@@ -78,4 +79,21 @@ const loginController = async (req, res) => {
   });
 };
 
-module.exports = { registerController, loginController };
+/*
+LogOut Controller
+*/
+const logoutController = async (req, res) => {
+  const token = req.cookies.jwt_token;
+
+  await redis.set(token, Date.now().toString());
+
+  // Clear cookie
+  res.clearCookie("jwt_token");
+
+  res.status(200).json({
+    message: "You are logged out SuccessfUlly",
+    More: "Your Token is Saved To Redis",
+  });
+};
+
+module.exports = { registerController, loginController, logoutController };

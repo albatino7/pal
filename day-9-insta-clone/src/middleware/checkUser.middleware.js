@@ -1,7 +1,17 @@
 const jwt = require("jsonwebtoken");
+const { redis } = require("../config/redis");
 
 const checkUserMiddleware = async (req, res, next) => {
   const token = req.cookies.jwt_token;
+
+  // Redis Implimentation
+  //
+  const checkTokenInBlacklisted = await redis.get(token);
+  if (checkTokenInBlacklisted) {
+    return res.status(401).json({
+      message: "Your Token is Found in Redis > You Cannot LoggedIN",
+    });
+  }
 
   let decoded;
   try {
