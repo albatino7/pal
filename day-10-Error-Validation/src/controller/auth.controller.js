@@ -1,5 +1,9 @@
 const registerController = async (req, res, next) => {
   try {
+    const { username, email } = req.body;
+
+    console.log(username, email);
+
     const userAlreadyExists = true;
     if (!userAlreadyExists) {
       const error = new Error("user already exists in DB");
@@ -8,7 +12,7 @@ const registerController = async (req, res, next) => {
       throw error;
     }
 
-    const token = false;
+    const token = true;
 
     if (!token) {
       const error = new Error("token is invalid ");
