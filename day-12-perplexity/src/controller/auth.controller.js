@@ -4,6 +4,7 @@ import userModel from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import config from "../config/config.js";
 import jwt from "jsonwebtoken";
+import redis from "../config/redis.js";
 
 const registerController = async (req, res, next) => {
   try {
@@ -86,6 +87,7 @@ const loginController = async (req, res, next) => {
       config.ACCESS_TOKEN_SECRET,
       { expiresIn: "1d" },
     );
+    // console.log(token);
 
     res.cookie("accessToken", token);
 
@@ -97,4 +99,45 @@ const loginController = async (req, res, next) => {
     next(error);
   }
 };
-export { registerController, loginController };
+
+const logoutController = async (req, res, next) => {
+  try {
+    const token = req.cookies.accessToken;
+    const userID = req.user.userid;
+    console.log(token);
+
+    const userExisted = await userModel.findOne({
+      _id: userID,
+    });
+
+    if (!userExisted) {
+      const error = new Error("User id is not existed In DB");
+      error.status = 400;
+      throw error;
+    }
+
+    await redis.set(token, Date.now().toString());
+
+    res.clearCookie("accessToken");
+
+    res.status(200).json({
+      message: "user Logout Sucessfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const protectedController = async (req, res, next) => {
+  const userID = req.user.userid;
+  console.log(userID);
+  res.status(200).json({
+    message: "You can Access Your Protected Routes ",
+  });
+};
+export {
+  registerController,
+  loginController,
+  logoutController,
+  protectedController,
+};
