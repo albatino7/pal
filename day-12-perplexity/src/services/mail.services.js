@@ -25,20 +25,24 @@ transporter
 
 const sendEmail = async ({ to, subject, text, html }) => {
   try {
+    console.log("========== SEND EMAIL ==========");
+    console.log("FROM:", config.GOOGLE_USER);
+    console.log("TO:", to);
+    console.log("SUBJECT:", subject);
+    console.log("================================");
+
     const info = await transporter.sendMail({
-      from: `"Your Name" <${config.GOOGLE_USER}>`, // sender address
-      to, // list of receivers
-      subject, // Subject line
-      text, // plain text body
-      html, // html body
+      from: `"Parplexity" <${config.GOOGLE_USER}>`,
+      to: to,
+      subject,
+      text,
+      html,
     });
 
-    // console.log("Message sent: %s", info.messageId);
-    // console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-    // const Details = await transporter.sendMail(info);
-    // console.log(Details);
+    console.log("EMAIL SENT SUCCESSFULLY");
+    console.log("Message ID:", info.messageId);
   } catch (error) {
-    // console.error("Error sending email:", error);
+    console.error("EMAIL SENDING ERROR:", error);
     throw error;
   }
 };
